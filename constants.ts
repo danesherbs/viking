@@ -1,0 +1,4 @@
+export const RADIUS_EARTH_KM = 6371.0;
+
+export const GPS_TIMEOUT_MILLISECONDS = 1000;
+export const MAY_SHOW_USER_SETTINGS_DIALOG = true;
