@@ -24,14 +24,12 @@ const locationOptions = {
   mayShowUserSettingsDialog: MAY_SHOW_USER_SETTINGS_DIALOG
 };
 
-const requestLocationPermission = async () => {
+export const requestLocationPermission = async () => {
   return await Permissions.askAsync(Permissions.LOCATION);
 }
 
 export const useLocation = () => {
   const [location, setLocation] = useState<Position>([0, 0]);
-
-  requestLocationPermission();
 
   useEffect(() => {
     Location.watchPositionAsync(locationOptions,
@@ -48,8 +46,6 @@ export const useLocation = () => {
 export const useHeading = () => {
     const [heading, setHeading] = useState<Angle>(0);
 
-    requestLocationPermission();
-  
     useEffect(() => {
       Location.watchHeadingAsync(({trueHeading}) => {
         if (trueHeading !== -1) {
