@@ -70,15 +70,10 @@ const newPosition = ([lat, long]: Position, [dy, dx]: Position) => {
 }
 
 const degreesToTarget = (current: Position, finish: Position, orientation: Orientation) => {
-  // eslint-disable-next-line
-  const [alpha, ...rest] = orientation;
-  if (current && finish) {
-    const d = haversineDistance(current, finish);
-    const other = newPosition(current, [d, 0]);
-    const a = haversineDistance([other[0], other[1]], finish);  // TODO: refactor other
-    const gamma = Math.acos((2*Math.pow(d, 2) -  Math.pow(a, 2)) / (2*Math.pow(d, 2)));
-    if (finish[1])
-    return toDeg((alpha - gamma) % (2 * Math.PI));
-  }
-  return toDeg(alpha);
+  const [alpha, _] = orientation;
+  const d = haversineDistance(current, finish);
+  const other = newPosition(current, [d, 0]);
+  const a = haversineDistance([other[0], other[1]], finish);  // TODO: refactor other
+  const gamma = Math.acos((2*Math.pow(d, 2) -  Math.pow(a, 2)) / (2*Math.pow(d, 2)));
+  return toDeg((alpha - gamma) % (2 * Math.PI));
 }
