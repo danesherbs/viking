@@ -74,6 +74,6 @@ const deltaHeading = (current: Position, finish: Position, heading: Angle) => {
   return targetHeading(current, finish) - heading;
 }
 
-const degreesToTarget = (current: Position, finish: Position, heading: Angle) => {
+export const degreesToTarget = (current: Position, finish: Position, heading: Angle) => {
   return mod(toDeg(deltaHeading(current, finish, heading)), 360);
 }
