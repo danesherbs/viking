@@ -9,13 +9,10 @@ export type Angle = number;
 export type Position = [Angle, Angle];
 
 
-<<<<<<< HEAD
-=======
 export const toRad = (degrees: number) => {
   return degrees * Math.PI / 180.0;
 }
 
->>>>>>> journey-direction
 export const toDeg = (radians: number) => {
   return radians * 180.0 / Math.PI;
 }
@@ -66,8 +63,6 @@ export const haversineDistance = ([lat1, long1]: Position, [lat2, long2]: Positi
 const haversine = (radians: number) => {
   return (1 - Math.cos(radians)) / 2.0;
 }
-<<<<<<< HEAD
-=======
 
 const targetHeading = (current: Position, finish: Position) => {
   const dy: number = (finish[0] - current[0]) * RADIUS_EARTH_KM;
@@ -82,4 +77,3 @@ const deltaHeading = (current: Position, finish: Position, heading: Angle) => {
 const degreesToTarget = (current: Position, finish: Position, heading: Angle) => {
   return mod(toDeg(deltaHeading(current, finish, heading)), 360);
 }
->>>>>>> journey-direction
