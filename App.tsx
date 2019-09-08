@@ -27,16 +27,10 @@ function JourneyProgressBar(props) {
 function JourneyDirection(props) {
   if (props.location && props.finish && props.heading) {
 
-    const dy = (props.finish[0] - props.location[0]) * RADIUS_EARTH_KM;
-    const dx = (props.finish[1] - props.location[1]) * RADIUS_EARTH_KM;
-
-    // const fheading: Angle = toDeg(Math.acos(dy / norm([dx, dy])));
+    const dy: number = (props.finish[0] - props.location[0]) * RADIUS_EARTH_KM;
+    const dx: number = (props.finish[1] - props.location[1]) * RADIUS_EARTH_KM;
     const fheading: Angle = toDeg(Math.atan2(dx, dy));
-
-    const rot = mod(fheading - props.heading, 360);
-
-    console.log(`(dx, dy): (${dx}, ${dy})`)
-    console.log(`(fheading, heading, rotation): (${fheading}, ${props.heading}, ${rot})`)
+    const rot: Angle = mod(fheading - props.heading, 360);
 
     return (
       <Image
@@ -57,8 +51,6 @@ function App() {
   const location: Position = useLocation();
   const [start, setStart] = useState<Position>(undefined);
   const [finish, setFinish] = useState<Position>(undefined);
-
-  console.log(`(start, location, finish): ((${start}), (${location}), (${finish}))`)
 
   return (
     <LinearGradient colors={['#2F80ED', '#56CCF2']} style={styles.background}>
@@ -98,7 +90,7 @@ const styles = StyleSheet.create({
   },
 
   search: {
-    backgroundColor: 'powderblue',
+    // backgroundColor: 'powderblue',
     flex: 2,
     alignItems: 'center',
     justifyContent: 'center',
@@ -106,25 +98,25 @@ const styles = StyleSheet.create({
   },
 
   searchBoundingBox: {
-    backgroundColor: 'black',
+    // backgroundColor: 'black',
     width: '85%',
   },
 
   pointerBoundingBox: {
-    backgroundColor: 'blue',
+    // backgroundColor: 'blue',
     width: 350,
     height: 350,
   },
 
   pointer: {
-    backgroundColor: 'skyblue',
+    // backgroundColor: 'skyblue',
     flex: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   progressBoundingBox: {
-    backgroundColor: 'steelblue',
+    // backgroundColor: 'steelblue',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
