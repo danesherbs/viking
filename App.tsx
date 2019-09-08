@@ -66,7 +66,9 @@ function App() {
         />
       </View>
       <View style={styles.pointer}>
-        <JourneyDirection heading={heading} location={location} finish={finish} />
+        <View style={styles.pointerBoundingBox}>
+          <JourneyDirection heading={heading} location={location} finish={finish} />
+        </View>
       </View>
       <View style={styles.progressBoundingBox}>
         <JourneyProgressBar start={start} location={location} finish={finish} />
