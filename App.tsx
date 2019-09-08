@@ -1,6 +1,6 @@
 import React from 'react';
+import { useState } from 'react';
 import { Text, View, Image } from 'react-native';
-// import { styles, searchStyles } from './styles';
 import { StyleSheet } from 'react-native';
 import { useHeading, useLocation, requestLocationPermission, Position, Angle } from './geo';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,15 +12,43 @@ import { progress } from './progress';
 import { GOOGLE_API_KEY } from './secrets';
 
 
-export default function App() {
+function JourneyProgressBar(props) {
+  if (props.start && props.current && props.finish) {
+    return (
+      <ProgressBar
+          progress={progress(props.start, props.current, props.finish)}
+          color={Colors.yellow700}
+          style={styles.progress}
+      />
+    );
+  }
+
+  return null;  // journey is undefined
+}
+
+function JourneyDirection(props) {
+  if (props.location && props.finish) {
+    return (
+      <Image
+        source={require('./img/arrow.png')}
+        style={{width: '100%', height: '100%', transform: [{rotate: `${360-props.heading}` + 'deg'}]}}
+      />
+    );
+  }
+
+  return null;  // journey is undefined
+}
+
+function App() {
   
   requestLocationPermission();
 
   const heading: Angle = useHeading();
   const location: Position = useLocation();
+  const [start, setStart] = useState<Position>(undefined);
+  const [finish, setFinish] = useState<Position>(undefined);
 
-  var start: Position = null;
-  var finish: Position = null;
+  console.log(`(start, location, finish): ((${start}), (${location}), (${finish}))`)
 
   return (
     <LinearGradient colors={['#2F80ED', '#56CCF2']} style={styles.background}>
@@ -32,7 +60,7 @@ export default function App() {
           returnKeyType={'search'}
           fetchDetails={true}
           listViewDisplayed='true'
-          onPress={(data, details=null) => { alert('JKSA!') }}
+          onPress={(_, {geometry: { location: { lat, lng } } }) => { setStart(location); setFinish([parseFloat(lat), parseFloat(lng)]) }}
           renderDescription={row => row.description}
           GooglePlacesDetailsQuery={{fields: 'formatted_address'}}
           GooglePlacesSearchQuery={{rankby: 'distance'}}
@@ -42,19 +70,10 @@ export default function App() {
         />
       </View>
       <View style={styles.pointer}>
-        <View style={styles.pointerBoundingBox}>
-          <Image
-            source={require('./img/arrow.png')}
-            style={{width: '100%', height: '100%', transform: [{rotate: `${360-heading}` + 'deg'}]}}
-          />
-        </View>
+        <JourneyDirection heading={heading} />
       </View>
       <View style={styles.progressBoundingBox}>
-        <ProgressBar
-          progress={(360.0 - heading) / 360.0}
-          color={Colors.yellow700}
-          style={styles.progress}
-        />
+        <JourneyProgressBar start={start} current={location} finish={finish} />
       </View>
     </LinearGradient>
   );
@@ -183,3 +202,6 @@ const nativeSearchStyles = StyleSheet.create({
     position: 'absolute',
   },
 });
+
+
+export default App;
