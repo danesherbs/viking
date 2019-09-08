@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useHeading, useLocation, requestLocationPermission, Position, Angle, haversineDistance } from './geo';
+import { useHeading, useLocation, requestLocationPermission, Position, Angle, toDeg } from './geo';
+import { RADIUS_EARTH_KM } from './constants';
+import { norm, mod } from 'mathjs';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_API_KEY } from './secrets';
 import { progress } from './progress';
@@ -23,11 +25,23 @@ function JourneyProgressBar(props) {
 }
 
 function JourneyDirection(props) {
-  if (props.location && props.finish) {
+  if (props.location && props.finish && props.heading) {
+
+    const dy = (props.finish[0] - props.location[0]) * RADIUS_EARTH_KM;
+    const dx = (props.finish[1] - props.location[1]) * RADIUS_EARTH_KM;
+
+    // const fheading: Angle = toDeg(Math.acos(dy / norm([dx, dy])));
+    const fheading: Angle = toDeg(Math.atan2(dx, dy));
+
+    const rot = mod(fheading - props.heading, 360);
+
+    console.log(`(dx, dy): (${dx}, ${dy})`)
+    console.log(`(fheading, heading, rotation): (${fheading}, ${props.heading}, ${rot})`)
+
     return (
       <Image
         source={require('./img/arrow.png')}
-        style={{width: '100%', height: '100%', transform: [{rotate: `${360-props.heading}` + 'deg'}]}}
+        style={{width: '100%', height: '100%', transform: [{rotate: `${rot}` + 'deg'}]}}
       />
     );
   }
@@ -56,7 +70,7 @@ function App() {
           returnKeyType={'search'}
           fetchDetails={true}
           listViewDisplayed='true'
-          onPress={(_, {geometry: { location: { lat, lng } } }) => { setStart(location); setFinish([parseFloat(lat), parseFloat(lng)]) }}
+          onPress={(_, {geometry: {location: {lat, lng}}}) => { setStart(location); setFinish([parseFloat(lat), parseFloat(lng)]) }}
           renderDescription={row => row.description}
           GooglePlacesDetailsQuery={{fields: 'formatted_address'}}
           GooglePlacesSearchQuery={{rankby: 'distance'}}
