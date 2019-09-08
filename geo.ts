@@ -5,14 +5,8 @@ import { RADIUS_EARTH_KM, GPS_TIMEOUT_MILLISECONDS, MAY_SHOW_USER_SETTINGS_DIALO
 
 
 export type Angle = number;
-export type Orientation = [Angle, Angle, Angle];
 export type Position = [Angle, Angle];
-export type Journey = [Position, Position];
 
-
-const toRad = (degrees: number) => {
-  return degrees * Math.PI / 180.0;
-}
 
 export const toDeg = (radians: number) => {
   return radians * 180.0 / Math.PI;
@@ -63,17 +57,4 @@ export const haversineDistance = ([lat1, long1]: Position, [lat2, long2]: Positi
 
 const haversine = (radians: number) => {
   return (1 - Math.cos(radians)) / 2.0;
-}
-
-const newPosition = ([lat, long]: Position, [dy, dx]: Position) => {
-  return [lat + dy / RADIUS_EARTH_KM, long + dx / RADIUS_EARTH_KM / Math.cos(lat)];
-}
-
-const degreesToTarget = (current: Position, finish: Position, orientation: Orientation) => {
-  const [alpha, _] = orientation;
-  const d = haversineDistance(current, finish);
-  const other = newPosition(current, [d, 0]);
-  const a = haversineDistance([other[0], other[1]], finish);  // TODO: refactor other
-  const gamma = Math.acos((2*Math.pow(d, 2) -  Math.pow(a, 2)) / (2*Math.pow(d, 2)));
-  return toDeg((alpha - gamma) % (2 * Math.PI));
 }
