@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { mod } from 'mathjs';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import { RADIUS_EARTH_KM, GPS_TIMEOUT_MILLISECONDS, MAY_SHOW_USER_SETTINGS_DIALOG } from './constants';
@@ -10,7 +11,7 @@ export type Position = [Angle, Angle];
 export type Journey = [Position, Position];
 
 
-const toRad = (degrees: number) => {
+export const toRad = (degrees: number) => {
   return degrees * Math.PI / 180.0;
 }
 
@@ -65,15 +66,16 @@ const haversine = (radians: number) => {
   return (1 - Math.cos(radians)) / 2.0;
 }
 
-const newPosition = ([lat, long]: Position, [dy, dx]: Position) => {
-  return [lat + dy / RADIUS_EARTH_KM, long + dx / RADIUS_EARTH_KM / Math.cos(lat)];
+const targetHeading = (current: Position, finish: Position) => {
+  const dy: number = (finish[0] - current[0]) * RADIUS_EARTH_KM;
+  const dx: number = (finish[1] - location[1]) * RADIUS_EARTH_KM;
+  return Math.atan2(dx, dy);
 }
 
-const degreesToTarget = (current: Position, finish: Position, orientation: Orientation) => {
-  const [alpha, _] = orientation;
-  const d = haversineDistance(current, finish);
-  const other = newPosition(current, [d, 0]);
-  const a = haversineDistance([other[0], other[1]], finish);  // TODO: refactor other
-  const gamma = Math.acos((2*Math.pow(d, 2) -  Math.pow(a, 2)) / (2*Math.pow(d, 2)));
-  return toDeg((alpha - gamma) % (2 * Math.PI));
+const deltaHeading = (current: Position, finish: Position, heading: Angle) => {
+  return targetHeading(current, finish) - heading;
+}
+
+const degreesToTarget = (current: Position, finish: Position, heading: Angle) => {
+  return mod(toDeg(deltaHeading(current, finish, heading)), 360);
 }

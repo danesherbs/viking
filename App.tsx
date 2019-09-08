@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useHeading, useLocation, requestLocationPermission, Position, Angle, toDeg } from './geo';
-import { RADIUS_EARTH_KM } from './constants';
-import { norm, mod } from 'mathjs';
+import { useHeading, useLocation, requestLocationPermission, Position, Angle, toRad, degreesToTarget } from './geo';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_API_KEY } from './secrets';
 import { progress } from './progress';
@@ -27,10 +25,7 @@ function JourneyProgressBar(props) {
 function JourneyDirection(props) {
   if (props.location && props.finish && props.heading) {
 
-    const dy: number = (props.finish[0] - props.location[0]) * RADIUS_EARTH_KM;
-    const dx: number = (props.finish[1] - props.location[1]) * RADIUS_EARTH_KM;
-    const fheading: Angle = toDeg(Math.atan2(dx, dy));
-    const rot: Angle = mod(fheading - props.heading, 360);
+    const rot: Angle = degreesToTarget(props.location, props.finish, toRad(props.heading));
 
     return (
       <Image
