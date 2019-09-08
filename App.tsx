@@ -1,22 +1,18 @@
-import React from 'react';
-import { useState } from 'react';
-import { Text, View, Image } from 'react-native';
-import { StyleSheet } from 'react-native';
-import { useHeading, useLocation, requestLocationPermission, Position, Angle } from './geo';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { useHeading, useLocation, requestLocationPermission, Position, Angle, haversineDistance } from './geo';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-
-import { ProgressBar, Colors } from 'react-native-paper';
-import { progress } from './progress';
 import { GOOGLE_API_KEY } from './secrets';
+import { progress } from './progress';
+import { ProgressBar, Colors } from 'react-native-paper';
 
 
 function JourneyProgressBar(props) {
-  if (props.start && props.current && props.finish) {
+  if (props.start && props.location && props.finish) {
     return (
       <ProgressBar
-          progress={progress(props.start, props.current, props.finish)}
+          progress={progress(props.start, props.location, props.finish)}
           color={Colors.yellow700}
           style={styles.progress}
       />
@@ -70,10 +66,10 @@ function App() {
         />
       </View>
       <View style={styles.pointer}>
-        <JourneyDirection heading={heading} />
+        <JourneyDirection heading={heading} location={location} finish={finish} />
       </View>
       <View style={styles.progressBoundingBox}>
-        <JourneyProgressBar start={start} current={location} finish={finish} />
+        <JourneyProgressBar start={start} location={location} finish={finish} />
       </View>
     </LinearGradient>
   );
@@ -159,47 +155,6 @@ const searchStyles = StyleSheet.create({
 
   description: {
     fontWeight: 'bold',
-  },
-});
-
-const nativeSearchStyles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f5f5f5',
-    paddingBottom: 13,
-    paddingTop: 13,
-    flexDirection: 'row',
-    overflow: 'hidden',
-    alignItems: 'center',
-  },
-  input: {
-    marginLeft: 6,
-    overflow: 'hidden',
-  },
-  inputContainer: {
-    borderBottomWidth: 0,
-    backgroundColor: '#dcdce1',
-    borderRadius: 9,
-    minHeight: 36,
-    marginLeft: 8,
-    marginRight: 8,
-  },
-  rightIconContainerStyle: {
-    marginRight: 8,
-  },
-  leftIconContainerStyle: {
-    marginLeft: 8,
-  },
-  buttonTextStyle: {
-    color: '#007aff',
-    textAlign: 'center',
-    padding: 8,
-    fontSize: 18,
-  },
-  buttonTextDisabled: {
-    color: '#cdcdcd',
-  },
-  cancelButtonContainer: {
-    position: 'absolute',
   },
 });
 
